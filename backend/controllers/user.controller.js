@@ -6,6 +6,7 @@ import { asyncHandler } from "../utilis/asyncHandler.js";
 
 // =============function to get all user except logged in user=======================
 export const getUserForSideBar = asyncHandler(async (req, res) => {
+    console.log("inside getUserForSideBar")
     const loggedInUser=req.user._id;
     console.log("loggedInUser",loggedInUser,req.user)
     const users = await User.find({_id:{$ne:loggedInUser}}).select("-password -refreshToken");
