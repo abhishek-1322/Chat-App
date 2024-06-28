@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import SideBar from '../../components/SideBar'
-import MessageConatiner from '../../components/MessageConatiner'
+import SideBar from '../../components/sidebar/SideBar'
+import MessageConatiner from '../../components/messages/MessageConatiner'
 
 export const Home = () => {
 const [sideBarUser, setSideBarUser] = useState([]);
@@ -16,9 +16,10 @@ useEffect(() => {
     // getSideBarUser();
 },[]);
   return (
-    <div className="flex gap-5 justify-center text-white sm:max-h-[450px] md:max-h-[550px] bg-light-gray-400 overflow-auto bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
+    <div className='md:flex items-center w-full '>
         <SideBar/>
         <MessageConatiner/>
     </div>
+
   )
 }

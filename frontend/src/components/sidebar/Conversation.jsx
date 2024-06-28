@@ -12,11 +12,11 @@ export default function Conversation() {
           </div>
           <div className="text-white flex justify-between w-full items-center">
             <p>John Doe</p>
-            <span>(pumpkin) </span>
+            <span>&#128509;</span>
           </div>
         </div>
       </div>
-      <hr />
+      <hr className="opacity-50" />
     </>
   );
 }
