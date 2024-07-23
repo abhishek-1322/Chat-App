@@ -29,9 +29,9 @@ const generateAccessAndRefreshToken=async(userId)=>{
 // ==================controller for signup user===================
 export const signupUser=asyncHandler(async(req,res)=>{
     console.log("inside signup",req.body)
-    const{fullName,email,username,password,confirmPassword,gender}=req.body;
+    const{firstName,lastName,email,username,password,confirmPassword,gender}=req.body;
     // ======validate condition to check all fields are not empty======
-    if([username,fullName,email,password].some((field)=> field?.trim()==="")){
+    if([username,firstName,email,password].some((field)=> field?.trim()==="")){
         throw new ApiError(400,"All fields are required");
     }
     // ============check password and confirm password matches or not=============
@@ -49,7 +49,7 @@ export const signupUser=asyncHandler(async(req,res)=>{
     const profilePic= gender === "Male" ?`https://avatar.iran.liara.run/public/boy?username=${username}` : `https://avatar.iran.liara.run/public/girl?username=${username}`;
 
     console.log("profilePic",profilePic)
-
+    const fullName=`${firstName} ${lastName}`
     const newUser=await User.create({
         fullName,
         email,
@@ -59,39 +59,12 @@ export const signupUser=asyncHandler(async(req,res)=>{
         gender
     })
     const userResponse = await User.findById(newUser._id).select("-password");
-    res.status(200)
-    .json(
-        new ApiResponse(200,
-            userResponse,
-            "User logged in successfully"
-        )
-    )
-})
 
-// =================controller for login User=====================
-export const loginUser = asyncHandler(async (req, res) => {
-    const {username,email,password}=req.body;
-    if(username==="" && email===""){
-        throw new ApiError(400,"Username or Email is required");
-    }
-    const user=await User.findOne({
-        $or:[{ username },{ email }]
-    });
-    console.log("login in user",user)
-    if(!user){
-        throw new ApiError(401,"User does not exists");
-    }
-    const isPasswordCorrect=await user.isPasswordMatched(password);
-    if(!isPasswordCorrect){
-        throw new ApiError(401,"Invalid user credentials");
-    }
-    const {accessToken,refreshToken}=await generateAccessAndRefreshToken(user?._id?.valueOf());
+    console.log("userResponse",userResponse)
 
-    // ========after saving refresh token to db get user details again ===========
-    const loggedInUser=await User.findById(user._id).select("-password -refreshToken");
-    if(!loggedInUser){
-        throw new ApiError(500,"Something went wrong while login user");
-    }
+    const {accessToken,refreshToken}=await generateAccessAndRefreshToken(userResponse?._id?.valueOf());
+    console.log("gen",accessToken,refreshToken)
+
     // ==========options for cookies=========
     const options={
         maxAge: 15 * 24 * 60 * 60 * 1000,
@@ -105,14 +78,61 @@ export const loginUser = asyncHandler(async (req, res) => {
     .cookie("refresh_token",refreshToken,options)
     .json(
         new ApiResponse(200,
-            {
-                loggedInUser,
-                accessToken,
-                refreshToken
-            },
-            "User logged in successfully"
+            userResponse,
+            "User registered successfully"
         )
     )
+})
+
+// =================controller for login User=====================
+export const loginUser = asyncHandler(async (req, res) => {
+   try {
+     const {username,email,password}=req.body;
+     if(username==="" && email===""){
+         throw new ApiError(400,"Username or Email is required");
+     }
+     const user=await User.findOne({
+         $or:[{ username },{ email }]
+     });
+     console.log("login in user",user)
+     if(!user){
+         throw new ApiError(401,"User does not exists");
+     }
+     const isPasswordCorrect=await user.isPasswordMatched(password);
+     if(!isPasswordCorrect){
+         throw new ApiError(401,"Invalid user credentials");
+     }
+     const {accessToken,refreshToken}=await generateAccessAndRefreshToken(user?._id?.valueOf());
+ 
+     // ========after saving refresh token to db get user details again ===========
+     const loggedInUser=await User.findById(user._id).select("-password -refreshToken");
+     if(!loggedInUser){
+         throw new ApiError(500,"Something went wrong while login user");
+     }
+     // ==========options for cookies=========
+     const options={
+         maxAge: 15 * 24 * 60 * 60 * 1000,
+         httpOnly:true, //prevent XXS attack cross site scripting attacks
+         secure:true
+     }
+ 
+     // =========SAVE REFRESH TOKEN AND ACCESS TOKEN IN COOKIES & SEND RESPONSE============
+     res.status(200)
+     .cookie("access_token",accessToken,options)
+     .cookie("refresh_token",refreshToken,options)
+     .json(
+         new ApiResponse(200,
+             {
+                 loggedInUser,
+                 accessToken,
+                 refreshToken
+             },
+             "User logged in successfully"
+         )
+     )
+   } catch (error) {
+    res.status(400).json(new ApiError(400,error.message))
+   }
     
 })
 

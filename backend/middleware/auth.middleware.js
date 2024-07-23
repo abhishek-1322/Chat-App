@@ -4,7 +4,7 @@ import ApiError from "../utilis/apiError.js";
 
 export const verifyJWT=async (req,res,next)=>{
     try {
-        console.log("inside jwt",req.cookies[0],req)
+        console.log("inside jwt",req.cookies,req)
         const token=req?.cookies?.access_token || req?.headers?.authorization?.split(" ")[1];
         console.log("headers",req.headers.authorization?.split(" ")[1],req.cookies?.access_token)
         console.log("inside jwt",token, process.env.ACCESS_TOKEN_SECRET)

@@ -1,14 +1,33 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import useSignUp from "../../hooks/useSignUp.js";
+import logo from "../../assets/4.png";
 export default function Signup() {
+  const [inputs, setInputs] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    gender: ''
+  });
+
+  const { loading, signup } = useSignUp();
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    await signup(inputs);
+    console.log(inputs);
+  };
+
   return (
     <div className="flex items-center justify-center max-w-200 mx-auto">
-      <div className=" p-6 w-full bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-10 border border-gray-100">
-        <h1 className="text-4xl font-semibold text-white text-center">
-          Sign Up
-        </h1>
-        <form className="mt-6">
-          <div className="mt-5 flex gap-7">
+      <div className="p-6 w-full bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-10 border border-gray-100">
+        <div>
+          <img src={logo} alt="logo" className="w-28 mx-auto " />
+        </div>
+        <form className="h-[600px] overflow-auto md:h-auto" onSubmit={handleSignUp}>
+          <div className="mt-5 sm:flex-col md:flex md:flex-row gap-7">
             <div>
               <label
                 htmlFor="firstName"
@@ -19,10 +38,13 @@ export default function Signup() {
                 </span>
               </label>
               <input
-                type="firstName"
+                type="text"
                 name="firstName"
                 id="firstName"
                 className="w-full text-lg px-4 py-2 mt-1 text-black bg-light-gray-800 rounded-md focus:border focus:border-blue-400"
+                value={inputs.firstName}
+                onChange={(e) => setInputs({ ...inputs, firstName: e.target.value })}
+                autocomplete="given-name"
               />
             </div>
             <div>
@@ -35,15 +57,18 @@ export default function Signup() {
                 </span>
               </label>
               <input
-                type="lastName"
+                type="text"
                 name="lastName"
                 id="lastName"
                 className="w-full text-lg px-4 py-2 mt-1 text-black bg-light-gray-800 rounded-md focus:border focus:border-blue-400"
+                value={inputs.lastName}
+                onChange={(e) => setInputs({ ...inputs, lastName: e.target.value })}
+                autocomplete="family-name"
               />
             </div>
           </div>
 
-          <div className="mt-5 flex gap-7">
+          <div className="mt-5 sm:flex-col md:flex md:flex-row gap-7">
             <div>
               <label
                 htmlFor="username"
@@ -54,10 +79,13 @@ export default function Signup() {
                 </span>
               </label>
               <input
-                type="username"
+                type="text"
                 name="username"
                 id="username"
                 className="w-full text-lg px-4 py-2 mt-1 text-black bg-light-gray-800 rounded-md focus:border focus:border-blue-400"
+                value={inputs.username}
+                onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
+                autocomplete="username"
               />
             </div>
             <div>
@@ -69,11 +97,14 @@ export default function Signup() {
                 name="email"
                 id="email"
                 className="w-full text-lg px-4 py-2 mt-1 text-black bg-light-gray-800 rounded-md focus:border focus:border-blue-400"
+                value={inputs.email}
+                onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
+                autocomplete="email"
               />
             </div>
           </div>
 
-          <div className="mt-5 flex gap-7">
+          <div className="mt-5 sm:flex-col md:flex md:flex-row gap-7">
             <div>
               <label
                 htmlFor="password"
@@ -86,8 +117,11 @@ export default function Signup() {
               <input
                 type="password"
                 name="password"
-                id="Password"
+                id="password"
                 className="w-full text-lg px-4 py-2 mt-1 text-black bg-light-gray-800 rounded-md focus:border focus:border-blue-400"
+                value={inputs.password}
+                onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
+                autocomplete="new-password"
               />
             </div>
             <div>
@@ -100,10 +134,13 @@ export default function Signup() {
                 </span>
               </label>
               <input
-                type="confirmPassword"
+                type="password"
                 name="confirmPassword"
                 id="confirmPassword"
-                className="w-full text-lg px-4 py-2 mt-1  text-black bg-white rounded-md focus:border focus:border-blue-400"
+                className="w-full text-lg px-4 py-2 mt-1 text-black bg-white rounded-md focus:border focus:border-blue-400"
+                value={inputs.confirmPassword}
+                onChange={(e) => setInputs({ ...inputs, confirmPassword: e.target.value })}
+                autocomplete="new-password"
               />
             </div>
           </div>
@@ -113,32 +150,37 @@ export default function Signup() {
               <span className="text-lg font-semibold text-white">Gender</span>
             </label>
             <div className="mt-1 flex gap-2">
-              <input type="radio" id="male" name="gender" value="Male" />
-              <label for="male" className="mr-2 text-white">
+              <input type="radio" id="male" name="gender" value="Male"
+                onChange={(e) => setInputs({ ...inputs, gender: e.target.value })}
+              />
+              <label htmlFor="male" className="mr-2 text-white">
                 Male
               </label>
-              <input type="radio" id="female" name="gender" value="Female" />
-              <label for="female" className="mr-2 text-white">
+              <input type="radio" id="female" name="gender" value="Female"
+                onChange={(e) => setInputs({ ...inputs, gender: e.target.value })}
+              />
+              <label htmlFor="female" className="mr-2 text-white">
                 Female
               </label>
             </div>
           </div>
 
           <div className="mt-3">
-            <a
-              href="#"
+            <Link
+              to="/login"
               className="text-sm text-white hover:underline hover:text-blue-600 mt-5"
             >
               Already have an account?
-            </a>
+            </Link>
           </div>
 
           <div className="mt-3">
             <button
               type="submit"
               className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-400 focus:outline-none focus:bg-blue-400"
+              disabled={loading}
             >
-              Signup
+              {loading ? <span className="loading loading-spinner"></span> : "Signup"}
             </button>
           </div>
         </form>

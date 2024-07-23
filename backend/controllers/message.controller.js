@@ -31,7 +31,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
     const { message } = req.body;
     const senderId = req.user._id.valueOf();
 
-    console.log("senderId", senderId, "receiverId", receiverId, "message", message);
+    console.log("senderId", senderId, "receiverId", receiverId, "message");
 
     // Check if the message is provided
     if (!message) {
