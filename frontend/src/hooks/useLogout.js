@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useAuthContext } from '../context/authContext';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function useLogout() {
   const [loading, setLoading] = useState(false);
 
   const {setCurrentAuthUser}=useAuthContext();
+  const navigate = useNavigate();
 
   const logout = async () => {
     try {
@@ -17,6 +19,7 @@ export default function useLogout() {
       const responseData = await response.json()
       console.log("Logout data",responseData)
       if(responseData.statusCode === 400){
+        navigate("/login")
         throw new Error(responseData.message);
       }
       toast.success(responseData.message);

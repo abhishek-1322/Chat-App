@@ -1,15 +1,18 @@
-import express from "express";
+
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 dotenv.config();
+import express from "express";
 
 import authRouter from "./routes/auth.routes.js";
 import messageRouter from "./routes/message.routes.js";
 import userRouter from "./routes/user.routes.js";
+import {app, server} from "./socket/socket.js";
+import { connectDB } from "./db/db.js";
 
-const app = express();
+connectDB()
 console.log("55",process.env.CORS_ORIGIN);
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
@@ -31,5 +34,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 app.use("/api/users", userRouter);
 
-
-export {app}; 
+server.listen(process.env.PORT || 8000, () => {
+    console.log("App is running on port ", process.env.PORT || 8000);
+})
