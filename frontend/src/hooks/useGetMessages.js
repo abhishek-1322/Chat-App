@@ -32,5 +32,5 @@ export default function useGetMessages() {
       getMessages();
     }
   }, [selectedConversation?._id, setMessages]);
-  return { loading, messages};
+  return { loading, messages, setMessages};
 }

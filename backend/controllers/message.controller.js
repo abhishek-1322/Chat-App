@@ -66,5 +66,8 @@ export const sendMessage = asyncHandler(async (req, res) => {
     conversation.messages.push(newMessage._id);
 
     await Promise.all([conversation.save(), newMessage.save()]);    
+    // Emit socket event to receiver
+    const io = req.app.get('io');
+    io.to(receiverId).emit('newMessage', newMessage);
     res.status(201).json(new ApiResponse(200, newMessage, "Message sent successfully"));
 });

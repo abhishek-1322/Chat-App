@@ -15,21 +15,24 @@ const io = new Server(server, {
 const userSocketMap = {};
 
 io.on('connection', (socket)=>{
-    console.log('a user connetced socket: 16', socket, socket.id);
+    console.log('a user connetced socket: 16======', socket.id);
     const userId =  socket.handshake.query.userId;
     if(userId !== undefined){
         userSocketMap[userId] = socket.id;
     }
+    if (userId) {
+        socket.join(userId);
 
-    //io.emit is used to send events to all connected clients
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
-
-
-    socket.on("disconnect", ()=>{
-        console.log("user disconnect", socket.id);
-        delete userSocketMap[userId];
+        //io.emit is used to send events to all connected clients
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    })
+
+        socket.on("disconnect", (reason)=>{
+            console.log('reason: ', reason);
+            console.log("user disconnectv 30", socket.id);
+            delete userSocketMap[userId];
+            io.emit("getOnlineUsers", Object.keys(userSocketMap));
+        })
+    }
 })
 
 export {app, io, server};

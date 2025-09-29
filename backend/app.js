@@ -9,7 +9,7 @@ import express from "express";
 import authRouter from "./routes/auth.routes.js";
 import messageRouter from "./routes/message.routes.js";
 import userRouter from "./routes/user.routes.js";
-import {app, server} from "./socket/socket.js";
+import {app, server, io} from "./socket/socket.js";
 import { connectDB } from "./db/db.js";
 
 connectDB()
@@ -33,7 +33,7 @@ app.use(express.static("public"));
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 app.use("/api/users", userRouter);
-
+app.set('io', io);
 server.listen(process.env.PORT || 8000, () => {
     console.log("App is running on port ", process.env.PORT || 8000);
 })
