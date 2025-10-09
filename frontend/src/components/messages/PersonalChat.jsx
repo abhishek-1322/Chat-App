@@ -13,16 +13,15 @@ export default function PersonalChat({selectedConversation}) {
   useEffect(() => {
     if (!socket) return;
     const handleNewMessage = (message) => {
-      console.log('handleNewMessage: 16====', message);
-      setMessages([...messages, message]);
-        // if (message.receiverId === selectedConversation._id || message.senderId === selectedConversation._id) {
-        //     setMessages(prev => [...messages, message]);
-        // }
+      console.log("📩 New message received:", message);
+      setMessages((prev) => [...prev, message]);
     };
-    socket.on('newMessage', handleNewMessage);
-    // return () => socket.off('newMessage', handleNewMessage);
-  }, [socket, selectedConversation, setMessages]);
-  
+
+    socket.on("newMessage", handleNewMessage);
+
+    // ✅ Clean up the listener on unmount or socket change
+    return () => socket.off("newMessage", handleNewMessage);
+  }, [socket, setMessages]);
   return (
     <>
       {!selectedConversation ? (
